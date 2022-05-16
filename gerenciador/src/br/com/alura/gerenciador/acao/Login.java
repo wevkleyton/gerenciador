@@ -5,6 +5,10 @@ import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import br.com.alura.gerenciador.modelo.Banco;
+import br.com.alura.gerenciador.modelo.Usuario;
 
 public class Login implements Acao {
 
@@ -16,7 +20,18 @@ public class Login implements Acao {
 		String senha = request.getParameter("senha");
 
 		System.out.println("Logando... " + login);
-		return "ridirect:entrada?acao=ListaEmpresas";
+		
+		Banco banco = new Banco();
+		Usuario usuario = banco.existeUsuario(login,senha);
+		if (usuario !=null) {
+			System.out.println("Usario Existe!");
+			HttpSession sessao = request.getSession();
+			sessao.setAttribute("usuarioLogado", usuario);
+			return "ridirect:entrada?acao=ListaEmpresas";
+		}else {
+			return "redirect:entrada?acao=LoginForm";
+		}
+		
 	}
 
 }
